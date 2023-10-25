@@ -1,50 +1,55 @@
+clear;
+close all;
+
 % parameters
 beta = 0.3;  % transmission rate
-gamma = 0.1;  % tecovery rate
-mu = 0.01;  % tortality rate
-N = 1000;  % total population
-I0 = 10;  % initial infected individuals
-S0 = N - I0;  % initial susceptible individuals
-R0 = 0;  % initial recovered individuals
-D0 = 0;  % initial deceased individuals
+gamma = 0.1;  % recovery rate
+mu = 0.01;  % mortality rate
+sigma = 0.02;  % rate of recovered individuals becoming susceptible again
+n = 1000;  % total population
+i0 = 10;  % initial infected individuals
+s0 = n - i0;  % initial susceptible individuals
+r0 = 0;  % initial recovered individuals
+d0 = 0;  % initial deceased individuals
 
 % time settings
-Tmax = 200;  % max time
+tmax = 200;  % max time
 dt = 1;  % time step
-T = 0:dt:Tmax;
+t = 0:dt:tmax;
 
 % initialize vectors
-S = zeros(1, length(T));
-I = zeros(1, length(T));
-R = zeros(1, length(T));
-D = zeros(1, length(T));
+s = zeros(1, length(t));
+i = zeros(1, length(t));
+r = zeros(1, length(t));
+d = zeros(1, length(t));
 
-S(1) = S0;
-I(1) = I0;
-R(1) = R0;
-D(1) = D0;
+s(1) = s0;
+i(1) = i0;
+r(1) = r0;
+d(1) = d0;
 
-for t = 2:length(T)
-    dS = -beta * S(t-1) * I(t-1) / N * dt;
-    dI = (beta * S(t-1) * I(t-1) / N - gamma * I(t-1) - mu * I(t-1)) * dt;
-    dR = gamma * I(t-1) * dt;
-    dD = mu * I(t-1) * dt;
+% implement the modified sird model with reinfections
+for j = 2:length(t)
+    ds = (-beta * s(j-1) * i(j-1) / n + sigma * r(j-1)) * dt;
+    di = (beta * s(j-1) * i(j-1) / n - gamma * i(j-1) - mu * i(j-1)) * dt;
+    dr = (gamma * i(j-1) - sigma * r(j-1)) * dt;
+    dd = mu * i(j-1) * dt;
 
-    S(t) = S(t-1) + dS;
-    I(t) = I(t-1) + dI;
-    R(t) = R(t-1) + dR;
-    D(t) = D(t-1) + dD;
+    s(j) = s(j-1) + ds;
+    i(j) = i(j-1) + di;
+    r(j) = r(j-1) + dr;
+    d(j) = d(j-1) + dd;
 end
 
-
+% plot the results
 figure;
-plot(T, S, '-b', 'LineWidth', 2);
+plot(t, s, '-g', 'LineWidth', 2);
 hold on;
-plot(T, I, '-r', 'LineWidth', 2);
-plot(T, R, '-g', 'LineWidth', 2);
-plot(T, D, '-k', 'LineWidth', 2);
-xlabel('Time (days)');
-ylabel('Population');
-legend('Susceptible', 'Infected', 'Recovered', 'Deceased');
-title('SIRD Model Simulation');
+plot(t, i, '-r', 'LineWidth', 2);
+plot(t, r, '-b', 'LineWidth', 2);
+plot(t, d, '-k', 'LineWidth', 2);
+xlabel('time (days)');
+ylabel('population');
+legend('susceptible', 'infected', 'recovered', 'deceased');
+title('sird model with reinfections simulation');
 grid on;
