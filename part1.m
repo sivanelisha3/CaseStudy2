@@ -1,55 +1,34 @@
 clear;
 close all;
 
-% parameters
-beta = 0.3;  % transmission rate
-gamma = 0.1;  % recovery rate
-mu = 0.01;  % mortality rate
-sigma = 0.02;  % rate of recovered individuals becoming susceptible again
-n = 1000;  % total population
-i0 = 10;  % initial infected individuals
-s0 = n - i0;  % initial susceptible individuals
-r0 = 0;  % initial recovered individuals
-d0 = 0;  % initial deceased individuals
+x_t = [0.75 0.10 0.10 0.05];
 
-% time settings
-tmax = 200;  % max time
-dt = 1;  % time step
-t = 0:dt:tmax;
+A = [.95 .04 .3 0;
+    .05 .85 0 0;
+    0 .1 .7 0;
+    0 .01 0 1];
 
-% initialize vectors
-s = zeros(1, length(t));
-i = zeros(1, length(t));
-r = zeros(1, length(t));
-d = zeros(1, length(t));
+% initial condition: 
+x0 = [1; 0; 0; 0]; 
 
-s(1) = s0;
-i(1) = i0;
-r(1) = r0;
-d(1) = d0;
+num_days = 100; 
 
-% implement the modified sird model with reinfections
-for j = 2:length(t)
-    ds = (-beta * s(j-1) * i(j-1) / n + sigma * r(j-1)) * dt;
-    di = (beta * s(j-1) * i(j-1) / n - gamma * i(j-1) - mu * i(j-1)) * dt;
-    dr = (gamma * i(j-1) - sigma * r(j-1)) * dt;
-    dd = mu * i(j-1) * dt;
+X = zeros(4, num_days);
+X(:,1) = x0;
 
-    s(j) = s(j-1) + ds;
-    i(j) = i(j-1) + di;
-    r(j) = r(j-1) + dr;
-    d(j) = d(j-1) + dd;
+% allocate
+for t = 2:num_days
+    X(:,t) = A * X(:,t-1);
 end
 
-% plot the results
+% plot
 figure;
-plot(t, s, '-g', 'LineWidth', 2);
-hold on;
-plot(t, i, '-r', 'LineWidth', 2);
-plot(t, r, '-b', 'LineWidth', 2);
-plot(t, d, '-k', 'LineWidth', 2);
-xlabel('time (days)');
-ylabel('population');
-legend('susceptible', 'infected', 'recovered', 'deceased');
-title('sird model with reinfections simulation');
+plot(1:num_days, X(1,:), 'b', 'LineWidth', 2); hold on;
+plot(1:num_days, X(2,:), 'r', 'LineWidth', 2);
+plot(1:num_days, X(3,:), 'g', 'LineWidth', 2);
+plot(1:num_days, X(4,:), 'k', 'LineWidth', 2);
+legend('Susceptible', 'Infected', 'Recovered', 'Deceased');
+xlabel('Days');
+ylabel('Population Fraction');
+title('Epidemic Dynamics Over Time');
 grid on;
