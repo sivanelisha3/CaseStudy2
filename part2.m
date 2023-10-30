@@ -35,24 +35,27 @@ recovered_dotted = normalized_cases(1:100) - normalized_deaths(1:100); % normali
 % Single plot
 figure;
 
+% Use a numerical range for the x-axis
+days_range = 1:num_days;  % Represents days 1 to 100
+
 % Epidemic Dynamics Over Time
-plot(selected_dates, cumsum(X(:,1)), 'b', 'LineWidth', 2); 
+plot(days_range, cumsum(X(:,1)), 'b', 'LineWidth', 2); 
 hold on;
-plot(selected_dates, cumsum(X(:,2)), 'r', 'LineWidth', 2);
-plot(selected_dates, cumsum(X(:,3)), 'g', 'LineWidth', 2);
-plot(selected_dates, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+plot(days_range, cumsum(X(:,2)), 'r', 'LineWidth', 2);
+plot(days_range, cumsum(X(:,3)), 'g', 'LineWidth', 2);
+plot(days_range, cumsum(X(:,4)), 'k', 'LineWidth', 2);
 
 % Normalized COVID Cases and Deaths in St. Louis for first 100 days
-plot(selected_dates, normalized_cases(1:100), '--r', 'LineWidth', 2); 
-plot(selected_dates, normalized_deaths(1:100), '--k', 'LineWidth', 2);
+plot(days_range, normalized_cases(1:100), '--r', 'LineWidth', 2); 
+plot(days_range, normalized_deaths(1:100), '--k', 'LineWidth', 2);
 
 % recovered and susceptible
-plot(selected_dates, susceptible_dotted, '--b', 'LineWidth', 2);
-plot(selected_dates, recovered_dotted, '--g', 'LineWidth', 2);
+plot(days_range, susceptible_dotted, '--b', 'LineWidth', 2);
+plot(days_range, recovered_dotted, '--g', 'LineWidth', 2);
 
 % Plot
 title('Comparison: Epidemic Dynamics and COVID Cases/Deaths in St. Louis (First 100 days)');
-xlabel('Date');
+xlabel('Days');
 ylabel('Population Fraction/Normalized Value');
 legend('Susceptible', 'Infected', 'Recovered', 'Deceased', 'Normalized Cases', 'Normalized Deaths', 'Susceptible Dotted', 'Recovered Dotted');
 grid on;
