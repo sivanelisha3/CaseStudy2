@@ -36,10 +36,10 @@ recovered_dotted = normalized_cases(1:100) - normalized_deaths(1:100); % normali
 figure;
 
 % Epidemic Dynamics Over Time
-plot(selected_dates, X(:,1), 'b', 'LineWidth', 2); hold on;
-plot(selected_dates, X(:,2), 'r', 'LineWidth', 2);
-plot(selected_dates, X(:,3), 'g', 'LineWidth', 2);
-plot(selected_dates, X(:,4), 'k', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,1)), 'b', 'LineWidth', 2); hold on;
+plot(selected_dates, cumsum(X(:,2)), 'r', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,3)), 'g', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,4)), 'k', 'LineWidth', 2);
 
 % Normalized COVID Cases and Deaths in St. Louis for first 100 days
 plot(selected_dates, normalized_cases(1:100), '--r', 'LineWidth', 2); 
