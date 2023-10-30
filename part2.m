@@ -6,7 +6,7 @@ x_t = [0.75 0.10 0.10 0.05];
 
 A = [.95 .04 .3 0;
     .05 .85 0 0;
-    0 .199 .7 0;
+    0 .1999 .7 0;
     0 .0001 0 1];
 
 % initial condition: 
@@ -14,13 +14,9 @@ x0 = [1; 0; 0; 0];
 
 num_days = 100; 
 
-X = zeros(4, num_days);
-X(:,1) = x0;
-
-% allocate
-for t = 2:num_days
-    X(:,t) = A * X(:,t-1);
-end
+% Allocate
+sys = ss(A, [], [], [], 1); % Ts = 1
+[Y, T, X] = lsim(sys, [], 0:num_days-1, x0);
 
 % Step 1: Load the data from the 'COVID_STL.mat' file
 load('COVID_STL.mat');
@@ -40,10 +36,10 @@ recovered_dotted = normalized_cases(1:100) - normalized_deaths(1:100); % normali
 figure;
 
 % Epidemic Dynamics Over Time
-plot(selected_dates, X(1,1:100), 'b', 'LineWidth', 2); hold on;
-plot(selected_dates, X(2,1:100), 'r', 'LineWidth', 2);
-plot(selected_dates, X(3,1:100), 'g', 'LineWidth', 2);
-plot(selected_dates, X(4,1:100), 'k', 'LineWidth', 2);
+plot(selected_dates, X(:,1), 'b', 'LineWidth', 2); hold on;
+plot(selected_dates, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates, X(:,3), 'g', 'LineWidth', 2);
+plot(selected_dates, X(:,4), 'k', 'LineWidth', 2);
 
 % Normalized COVID Cases and Deaths in St. Louis for first 100 days
 plot(selected_dates, normalized_cases(1:100), '--r', 'LineWidth', 2); 
