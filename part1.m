@@ -16,9 +16,10 @@ num_days = 100;
 X = zeros(4, num_days);
 X(:,1) = x0;
 
-% allocate
+% Directly calculate using matrix power
 for t = 2:num_days
-    X(:,t) = A * X(:,t-1);
+    At = A^t;
+    X(:,t) = At * x0;
 end
 
 % plot
