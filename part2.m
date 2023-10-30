@@ -24,35 +24,35 @@ load('COVID_STL.mat');
 % Look at first 100 days
 selected_dates = dates(1:100);
 
-% Step 2: Normalize cases and deaths by population
-normalized_cases = cases_STL / POP_STL;
-normalized_deaths = deaths_STL / POP_STL;
+% Use the original case and death data
+cases = cases_STL(1:100);
+deaths = deaths_STL(1:100);
 
-% calculate recovered and susceptible based on the given data
-susceptible_dotted = 1 - normalized_cases(1:100) - normalized_deaths(1:100); % Population fraction - normalize_cases - normalize_deaths
-recovered_dotted = normalized_cases(1:100) - normalized_deaths(1:100); % normalized_cases - normalized_deaths
+% calculate recovered and susceptible based on the raw data
+susceptible = POP_STL - cumsum(cases) - cumsum(deaths);
+recovered = cumsum(cases) - cumsum(deaths);
 
 % Single plot
 figure;
 
 % Epidemic Dynamics Over Time
-plot(selected_dates, cumsum(X(:,1)), 'b', 'LineWidth', 2); hold on;
-plot(selected_dates, cumsum(X(:,2)), 'r', 'LineWidth', 2);
-plot(selected_dates, cumsum(X(:,3)), 'g', 'LineWidth', 2);
-plot(selected_dates, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,1)) * POP_STL, 'b', 'LineWidth', 2); hold on; % convert fraction to counts
+plot(selected_dates, cumsum(X(:,2)) * POP_STL, 'r', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,3)) * POP_STL, 'g', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,4)) * POP_STL, 'k', 'LineWidth', 2);
 
-% Normalized COVID Cases and Deaths in St. Louis for first 100 days
-plot(selected_dates, normalized_cases(1:100), '--r', 'LineWidth', 2); 
-plot(selected_dates, normalized_deaths(1:100), '--k', 'LineWidth', 2);
+% COVID Cases and Deaths in St. Louis for first 100 days
+plot(selected_dates, cumsum(cases), '--r', 'LineWidth', 2); 
+plot(selected_dates, cumsum(deaths), '--k', 'LineWidth', 2);
 
 % recovered and susceptible
-plot(selected_dates, susceptible_dotted, '--b', 'LineWidth', 2);
-plot(selected_dates, recovered_dotted, '--g', 'LineWidth', 2);
+plot(selected_dates, susceptible, '--b', 'LineWidth', 2);
+plot(selected_dates, recovered, '--g', 'LineWidth', 2);
 
 % Plot
 title('Comparison: Epidemic Dynamics and COVID Cases/Deaths in St. Louis (First 100 days)');
 xlabel('Date');
-ylabel('Population Fraction/Normalized Value');
-legend('Susceptible', 'Infected', 'Recovered', 'Deceased', 'Normalized Cases', 'Normalized Deaths', 'Susceptible Dotted', 'Recovered Dotted');
+ylabel('Cumulative Count');
+legend('Susceptible', 'Infected', 'Recovered', 'Deceased', 'Cases', 'Deaths', 'Susceptible Dotted', 'Recovered Dotted');
 grid on;
 hold off;
