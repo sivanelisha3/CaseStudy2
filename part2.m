@@ -28,35 +28,49 @@ selected_dates = dates(1:100);
 normalized_cases = cases_STL / POP_STL;
 normalized_deaths = deaths_STL / POP_STL;
 
-% calculate recovered and susceptible based on the given data
+% % calculate recovered and susceptible based on the given data
 susceptible_dotted = 1 - normalized_cases(1:100) - normalized_deaths(1:100); % Population fraction - normalize_cases - normalize_deaths
 recovered_dotted = normalized_cases(1:100) - normalized_deaths(1:100); % normalized_cases - normalized_deaths
 
 % Single plot
 figure;
 
-% Use a numerical range for the x-axis
-days_range = 1:num_days;  % Represents days 1 to 100
-
-% Epidemic Dynamics Over Time
-plot(days_range, cumsum(X(:,1)), 'b', 'LineWidth', 2); 
+% Use selected_dates for the x-axis
+plot(selected_dates, cumsum(X(:,2)), 'r', 'LineWidth', 2);
 hold on;
-plot(days_range, cumsum(X(:,2)), 'r', 'LineWidth', 2);
-plot(days_range, cumsum(X(:,3)), 'g', 'LineWidth', 2);
-plot(days_range, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+%plot(selected_dates, cumsum(X(:,3)), 'g', 'LineWidth', 2);
+plot(selected_dates, cumsum(X(:,4)), 'k', 'LineWidth', 2);
 
 % Normalized COVID Cases and Deaths in St. Louis for first 100 days
-plot(days_range, normalized_cases(1:100), '--r', 'LineWidth', 2); 
-plot(days_range, normalized_deaths(1:100), '--k', 'LineWidth', 2);
+plot(selected_dates, normalized_cases(1:100), '--r', 'LineWidth', 2); 
+plot(selected_dates, normalized_deaths(1:100), '--k', 'LineWidth', 2);
 
 % recovered and susceptible
-plot(days_range, susceptible_dotted, '--b', 'LineWidth', 2);
-plot(days_range, recovered_dotted, '--g', 'LineWidth', 2);
+%plot(selected_dates, recovered_dotted, '--g', 'LineWidth', 2);
 
 % Plot
 title('Comparison: Epidemic Dynamics and COVID Cases/Deaths in St. Louis (First 100 days)');
-xlabel('Days');
+xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
-legend('Susceptible', 'Infected', 'Recovered', 'Deceased', 'Normalized Cases', 'Normalized Deaths', 'Susceptible Dotted', 'Recovered Dotted');
+legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
+datetick('x', 'mmm dd', 'keepticks');  % This will format x-axis with month and day
+hold off;
+
+% plot all the data in a new figure
+figure;
+
+% use 'dates' for the x-axis based on the entire dataset
+plot(dates, normalized_cases, '--r', 'LineWidth', 2); 
+hold on;
+plot(dates, normalized_deaths, '--k', 'LineWidth', 2);
+
+
+% plot
+title('COVID Cases, Deaths, Susceptible, and Recovered in St. Louis (All Days)');
+xlabel('Date');
+ylabel('Population Fraction/Normalized Value');
+legend('Normalized Cases', 'Normalized Deaths', 'Susceptible', 'Recovered');
+grid on;
+datetick('x', 'mmm dd', 'keepticks');  % format x-axis with month and day
 hold off;
