@@ -65,8 +65,6 @@ hold off;
 
 
 
-
-
 %%%FIRST PHASE%%%%%
 figure;
 
@@ -103,7 +101,6 @@ hold off;
 
 
 
-%%%SECOND PHASE%%%%%
 % plot all the data in a new figure
 figure;
 
