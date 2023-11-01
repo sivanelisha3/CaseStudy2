@@ -70,34 +70,39 @@ hold off;
 %%%FIRST PHASE%%%%%
 figure;
 
-phase2 = 17; 
-
-sys = ss(A, [], [], [], 1); % Ts = 1
-[Y, T, X] = lsim(sys, [], 0:phase2-1, x0);
+phase2 = 18; 
 
 % Look at first 100 days
 selected_dates_phase2 = dates(68:85);
 
+A_phase2 = [.9997 .05 .3 0;
+            .00045 .75 0 0;
+            0 .1999 .7 0;
+            0 .0001 0 1];
 
-% use 'dates' for the x-axis based on the entire dataset
-plot(selected_dates_phase2, normalized_cases(68:85), '--r', 'LineWidth', 2); 
+% Initial conditions for the second phase
+x0_phase2 = [0.8; 0.1; 0.05; 0.05];
+
+% Create the system for the second phase
+sys_phase2 = ss(A_phase2, [], [], [], 1); % Ts = 1
+
+% Simulate the system for the second phase
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+
+% Plot normalized cases and deaths for the second phase
+plot(selected_dates_phase2, cumsum(X(:,2)), 'r', 'LineWidth', 2);
 hold on;
+plot(selected_dates_phase2, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+plot(selected_dates_phase2, normalized_cases(68:85), '--r', 'LineWidth', 2);
 plot(selected_dates_phase2, normalized_deaths(68:85), '--k', 'LineWidth', 2);
 
-%INSERT THE INFECTED AND DECEASED TUNED MODEL FOR PHASE 1
-
-
-
-% plot
-title('COVID Cases & Deaths in St. Louis First Phase');
+title('COVID Cases & Deaths in St. Louis Second Phase');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
-legend('Normalized Cases', 'Normalized Deaths'); %EDIT THIS TO INCLUDE THE TWO LINES FOR TUNED MODEL
+legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
-datetick('x', 'mmm dd yy', 'keepticks'); 
+datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
-
-
 
 
 
@@ -107,30 +112,38 @@ hold off;
 % plot all the data in a new figure
 figure;
 
-phase3 = 73; 
-
-sys = ss(A, [], [], [], 1); % Ts = 1
-[Y, T, X] = lsim(sys, [], 0:phase3-1, x0);
+phase3 = 74; 
 
 % Look at phase 3
 selected_dates_phase3 = dates(85:158);
 
 
-% use 'dates' for the x-axis based on the entire dataset
-plot(selected_dates_phase3, normalized_cases(85:158), '--r', 'LineWidth', 2); 
+% Define a new A matrix for the third phase (adjust values as needed)
+A_phase3 = [.9997 .05 .3 0;
+            .00045 .75 0 0;
+            0 .1999 .7 0;
+            0 .0001 0 1];
+
+% Initial conditions for the third phase
+x0_phase3 = [1; 0; 0; 0];
+
+% Create the system for the third phase
+sys_phase3 = ss(A_phase3, [], [], [], 1); % Ts = 1
+
+% Simulate the system for the third phase
+[Y, T, X] = lsim(sys_phase3, [], 0:phase3-1, x0_phase3);
+
+% Plot normalized cases and deaths for the third phase
+plot(selected_dates_phase3, cumsum(X(:,2)), 'r', 'LineWidth', 2);
 hold on;
+plot(selected_dates_phase3, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+plot(selected_dates_phase3, normalized_cases(85:158), '--r', 'LineWidth', 2);
 plot(selected_dates_phase3, normalized_deaths(85:158), '--k', 'LineWidth', 2);
 
-
-%INSERT THE INFECTED AND DECEASED TUNED MODEL FOR PHASE 2
-
-
-
-% plot
-title('COVID Cases & Deaths in St. Louis Second Phase');
+title('COVID Cases & Deaths in St. Louis Third Phase');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
-legend('Normalized Cases', 'Normalized Deaths'); %EDIT THIS TO INCLUDE THE TWO LINES FOR TUNED MODEL
+legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
-datetick('x', 'mmm dd yy', 'keepticks'); 
+datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
