@@ -123,30 +123,32 @@ phase3 = 74;
 
 selected_dates_phase3 = dates(85:158);
 
-x0_phase3 = [1; 0; 0; 0]; 
+x0_phase3 = [0.874624; 0.125376; 0; 0]; 
+
+x0_for_slope3_phase3 = [0.801722; 0.198278; 0; 0];
 
 % define the A matrices for each of the 4 slopes
-A_phase3_slope1 = [.9997 .05 .3 0;
-                    .00045 .75 0 0;
-                    0 .1999 .7 0;
-                    0 .0001 0 1];
-A_phase3_slope2 = [.9997 .05 .3 0;
-                    .00045 .75 0 0;
-                    0 .1999 .7 0;
-                    0 .0001 0 1]; 
-A_phase3_slope3 = [.9997 .05 .3 0;
-                    .00045 .75 0 0;
-                    0 .1999 .7 0;
-                    0 .0001 0 1]; 
+A_phase3_slope1 = [.99851    0  .3 0;
+                   .00159 .001   0 0;
+                    0     .9989 .7 0;
+                    0     .0001  0 1];
+A_phase3_slope2 = [.99851    0  .3 0;
+                   .00159 .9998  .4 0;
+                    0     .0001 .3 0;
+                    0     .0001  0 1]; 
+A_phase3_slope3 = [.99851    0  .3 0;
+                   .00159 .001   0 0;
+                    0     .9989 .7 0;
+                    0     .0001  0 1];
 A_phase3_slope4 = [.9997 .05 .3 0;
                     .00045 .75 0 0;
                     0 .1999 .7 0;
                     0 .0001 0 1]; 
 
 % define the time intervals for each slope
-t_phase3_slope1 = 85:93; 
-t_phase3_slope2 = 93:99;
-t_phase3_slope3 = 99:112;
+t_phase3_slope1 = 85:92; 
+t_phase3_slope2 = 92:97;
+t_phase3_slope3 = 97:112;
 t_phase3_slope4 = 112:158;
 
 % create the system for each slope
