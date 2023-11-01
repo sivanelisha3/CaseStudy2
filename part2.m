@@ -65,69 +65,118 @@ hold off;
 
 
 
+
+
 %%%FIRST PHASE%%%%%
 figure;
 
-phase2 = 17; 
-
-sys = ss(A, [], [], [], 1); % Ts = 1
-[Y, T, X] = lsim(sys, [], 0:phase2-1, x0);
+phase2 = 18; 
 
 % Look at first 100 days
 selected_dates_phase2 = dates(68:85);
 
+A_phase2 = [.9997 .05 .3 0;
+            .00045 .75 0 0;
+            0 .1999 .7 0;
+            0 .0001 0 1];
 
-% use 'dates' for the x-axis based on the entire dataset
-plot(selected_dates_phase2, normalized_cases(68:85), '--r', 'LineWidth', 2); 
+% Initial conditions for the second phase
+x0_phase2 = [0.8; 0.1; 0.05; 0.05];
+
+% Create the system for the second phase
+sys_phase2 = ss(A_phase2, [], [], [], 1); % Ts = 1
+
+% Simulate the system for the second phase
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+
+% Plot normalized cases and deaths for the second phase
+plot(selected_dates_phase2, cumsum(X(:,2)), 'r', 'LineWidth', 2);
 hold on;
+plot(selected_dates_phase2, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+plot(selected_dates_phase2, normalized_cases(68:85), '--r', 'LineWidth', 2);
 plot(selected_dates_phase2, normalized_deaths(68:85), '--k', 'LineWidth', 2);
 
-%INSERT THE INFECTED AND DECEASED TUNED MODEL FOR PHASE 1
-
-
-
-% plot
-title('COVID Cases & Deaths in St. Louis First Phase');
+title('COVID Cases & Deaths in St. Louis Second Phase');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
-legend('Normalized Cases', 'Normalized Deaths'); %EDIT THIS TO INCLUDE THE TWO LINES FOR TUNED MODEL
+legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
-datetick('x', 'mmm dd yy', 'keepticks'); 
+datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
 
 
 
+%%%SECOND PHASE%%%%%
 
+% 4 separate slopes for second phase: 
+% first: 10/27/2021 to 12/22/2021
+% second: 12/22/2021 to 02/02/2022
+% third: 02/02/2022 to 05/04/2022
+% fourth: 05/04/2022 to end
 
-
+% IMPLEMENT 4 SEPARATE SLOPES FOR ONE MODEL
 
 % plot all the data in a new figure
 figure;
 
-phase3 = 73; 
+phase3 = 74; 
 
-sys = ss(A, [], [], [], 1); % Ts = 1
-[Y, T, X] = lsim(sys, [], 0:phase3-1, x0);
-
-% Look at phase 3
 selected_dates_phase3 = dates(85:158);
 
+x0_phase3 = [1; 0; 0; 0]; 
 
-% use 'dates' for the x-axis based on the entire dataset
-plot(selected_dates_phase3, normalized_cases(85:158), '--r', 'LineWidth', 2); 
+% define the A matrices for each of the 4 slopes
+A_phase3_slope1 = [.9997 .05 .3 0;
+                    .00045 .75 0 0;
+                    0 .1999 .7 0;
+                    0 .0001 0 1];
+A_phase3_slope2 = [.9997 .05 .3 0;
+                    .00045 .75 0 0;
+                    0 .1999 .7 0;
+                    0 .0001 0 1]; 
+A_phase3_slope3 = [.9997 .05 .3 0;
+                    .00045 .75 0 0;
+                    0 .1999 .7 0;
+                    0 .0001 0 1]; 
+A_phase3_slope4 = [.9997 .05 .3 0;
+                    .00045 .75 0 0;
+                    0 .1999 .7 0;
+                    0 .0001 0 1]; 
+
+% define the time intervals for each slope
+t_phase3_slope1 = 85:93; 
+t_phase3_slope2 = 93:99;
+t_phase3_slope3 = 99:112;
+t_phase3_slope4 = 112:158;
+
+% create the system for each slope
+sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
+sys_slope2 = ss(A_phase3_slope2, [], [], [], 1);
+sys_slope3 = ss(A_phase3_slope3, [], [], [], 1);
+sys_slope4 = ss(A_phase3_slope4, [], [], [], 1);
+
+% simulate the system for each slope
+[Y1, T1, X1] = lsim(sys_slope1, [], t_phase3_slope1, x0_phase3);
+[Y2, T2, X2] = lsim(sys_slope2, [], t_phase3_slope2, X1(end,:));
+[Y3, T3, X3] = lsim(sys_slope3, [], t_phase3_slope3, X2(end,:));
+[Y4, T4, X4] = lsim(sys_slope4, [], t_phase3_slope4, X3(end,:));
+
+% combine results
+X4 = X4(1:end-3, :);
+X_combined = [X1; X2; X3; X4];
+selected_dates_phase3_combined = [selected_dates_phase3(1:length(t_phase3_slope1)), selected_dates_phase3(length(t_phase3_slope1)+1:length(t_phase3_slope1)+length(t_phase3_slope2)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+1:length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+1:end)];
+
+% plot combined results
+plot(selected_dates_phase3_combined, cumsum(X_combined(:,2)), 'r', 'LineWidth', 2);
 hold on;
+plot(selected_dates_phase3_combined, cumsum(X_combined(:,4)), 'k', 'LineWidth', 2);
+plot(selected_dates_phase3, normalized_cases(85:158), '--r', 'LineWidth', 2);
 plot(selected_dates_phase3, normalized_deaths(85:158), '--k', 'LineWidth', 2);
 
-
-%INSERT THE INFECTED AND DECEASED TUNED MODEL FOR PHASE 2
-
-
-
-% plot
-title('COVID Cases & Deaths in St. Louis Second Phase');
+title('COVID Cases & Deaths in St. Louis Third Phase');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
-legend('Normalized Cases', 'Normalized Deaths'); %EDIT THIS TO INCLUDE THE TWO LINES FOR TUNED MODEL
+legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
-datetick('x', 'mmm dd yy', 'keepticks'); 
+datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
