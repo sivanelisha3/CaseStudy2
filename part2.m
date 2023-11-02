@@ -108,14 +108,7 @@ hold off;
 
 %%%SECOND PHASE%%%%%
 
-% 4 separate slopes for second phase: 
-% first: 10/27/2021 to 12/22/2021
-% second: 12/22/2021 to 02/02/2022
-% third: 02/02/2022 to 05/04/2022
-% fourth: 05/04/2022 to end
-
-
-% IMPLEMENT 4 SEPARATE SLOPES FOR ONE MODEL
+% IMPLEMENT 5 SEPARATE SLOPES FOR ONE MODEL
 
 % plot all the data in a new figure
 figure;
@@ -139,38 +132,44 @@ A_phase3_slope2 = [.99851    0  .3  0;
                    .00159 .9998 .4  0;
                     0     .0001 .3  0;
                     0     .0001  0  1]; 
-A_phase3_slope3 = [.999955  .799  .3  0;
-                   .000045 .38   .4  0;
-                    0    .1999    .3  0;
+A_phase3_slope3 = [.999955  .4  .4  0;
+                   .000045 .5   0  0;
+                    0    .1999    .6  0;
                     0    .0001     0  1];
-A_phase3_slope4 = [.9997  .183   .7 0;
-                   .00045 .717    0 0;
+A_phase3_slope4 = [.99955  0   .4 0;
+                   .00045 .9    .3 0;
                     0    .1999  .3 0;
                     0    .0001   0 1]; 
+A_phase3_slope5 = [.9998    0  .02   0;
+                   .0012 .0001   0  0;
+                    0     .9998 .98   0;
+                    0     .0001  0   1];
 
 % define the time intervals for each slope
 t_phase3_slope1 = 85:92; 
 t_phase3_slope2 = 92:95;
 t_phase3_slope3 = 95:107;
-t_phase3_slope4 = 107:158;
+t_phase3_slope4 = 107:118;
+t_phase3_slope5 = 118:158;
 
 % create the system for each slope
 sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
 sys_slope2 = ss(A_phase3_slope2, [], [], [], 1);
 sys_slope3 = ss(A_phase3_slope3, [], [], [], 1);
 sys_slope4 = ss(A_phase3_slope4, [], [], [], 1);
+sys_slope5 = ss(A_phase3_slope5, [], [], [], 1);
 
 % simulate the system for each slope
 [Y1, T1, X1] = lsim(sys_slope1, [], t_phase3_slope1, x0_slope1_phase3);
 [Y2, T2, X2] = lsim(sys_slope2, [], t_phase3_slope2, X1(end,:));
 [Y3, T3, X3] = lsim(sys_slope3, [], t_phase3_slope3, X2(end,:));
 [Y4, T4, X4] = lsim(sys_slope4, [], t_phase3_slope4, X3(end,:));
+[Y5, T5, X5] = lsim(sys_slope5, [], t_phase3_slope5, X4(end,:));
 
 % combine results
-X4 = X4(1:end-3, :);
-X_combined = [X1; X2; X3; X4];
-selected_dates_phase3_combined = [selected_dates_phase3(1:length(t_phase3_slope1)), selected_dates_phase3(length(t_phase3_slope1)+1:length(t_phase3_slope1)+length(t_phase3_slope2)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+1:length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+1:end)];
-
+X5 = X5(1:end-4, :);
+X_combined = [X1; X2; X3; X4; X5];
+selected_dates_phase3_combined = [selected_dates_phase3(1:length(t_phase3_slope1)), selected_dates_phase3(length(t_phase3_slope1)+1:length(t_phase3_slope1)+length(t_phase3_slope2)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+1:length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+1:length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+length(t_phase3_slope4)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+length(t_phase3_slope4)+1:end)];
 % plot combined results
 plot(selected_dates_phase3_combined, cumsum(X_combined(:,2)), 'r', 'LineWidth', 2);
 hold on;
