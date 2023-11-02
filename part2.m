@@ -114,6 +114,7 @@ hold off;
 % third: 02/02/2022 to 05/04/2022
 % fourth: 05/04/2022 to end
 
+
 % IMPLEMENT 4 SEPARATE SLOPES FOR ONE MODEL
 
 % plot all the data in a new figure
@@ -123,33 +124,35 @@ phase3 = 74;
 
 selected_dates_phase3 = dates(85:158);
 
-x0_phase3 = [0.874624; 0.125376; 0; 0]; 
-
-x0_for_slope3_phase3 = [0.801722; 0.198278; 0; 0];
+x0_slope1_phase3 = [0.874624; 0.125376; 0; 0]; 
+% 
+% x0_slope2_phase3 = [0.86263; 0.13737; 0; 0];
+% 
+% x0_slope3_phase3 = [0.819666; 0.180334; 0; 0];
 
 % define the A matrices for each of the 4 slopes
 A_phase3_slope1 = [.99851    0  .3 0;
                    .00159 .001   0 0;
                     0     .9989 .7 0;
                     0     .0001  0 1];
-A_phase3_slope2 = [.99851    0  .3 0;
-                   .00159 .9998  .4 0;
-                    0     .0001 .3 0;
-                    0     .0001  0 1]; 
-A_phase3_slope3 = [.99851    0  .3 0;
-                   .00159 .001   0 0;
-                    0     .9989 .7 0;
-                    0     .0001  0 1];
-A_phase3_slope4 = [.9997 .05 .3 0;
-                    .00045 .75 0 0;
-                    0 .1999 .7 0;
-                    0 .0001 0 1]; 
+A_phase3_slope2 = [.99851    0  .3  0;
+                   .00159 .9998 .4  0;
+                    0     .0001 .3  0;
+                    0     .0001  0  1]; 
+A_phase3_slope3 = [.999955  .799  .3  0;
+                   .000045 .38   .4  0;
+                    0    .1999    .3  0;
+                    0    .0001     0  1];
+A_phase3_slope4 = [.9997  .183   .7 0;
+                   .00045 .717    0 0;
+                    0    .1999  .3 0;
+                    0    .0001   0 1]; 
 
 % define the time intervals for each slope
 t_phase3_slope1 = 85:92; 
-t_phase3_slope2 = 92:97;
-t_phase3_slope3 = 97:112;
-t_phase3_slope4 = 112:158;
+t_phase3_slope2 = 92:95;
+t_phase3_slope3 = 95:107;
+t_phase3_slope4 = 107:158;
 
 % create the system for each slope
 sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
@@ -158,7 +161,7 @@ sys_slope3 = ss(A_phase3_slope3, [], [], [], 1);
 sys_slope4 = ss(A_phase3_slope4, [], [], [], 1);
 
 % simulate the system for each slope
-[Y1, T1, X1] = lsim(sys_slope1, [], t_phase3_slope1, x0_phase3);
+[Y1, T1, X1] = lsim(sys_slope1, [], t_phase3_slope1, x0_slope1_phase3);
 [Y2, T2, X2] = lsim(sys_slope2, [], t_phase3_slope2, X1(end,:));
 [Y3, T3, X3] = lsim(sys_slope3, [], t_phase3_slope3, X2(end,:));
 [Y4, T4, X4] = lsim(sys_slope4, [], t_phase3_slope4, X3(end,:));
