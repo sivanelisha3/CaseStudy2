@@ -2,7 +2,7 @@ clear;
 close all;
 
 % Load mock data
-load('mockdata2023 (1).mat');
+load('mockdata2023.mat');
 
 % Number of Days being examined
 days = 1:400; 
@@ -55,7 +55,7 @@ x0_phase2 = X1(end, :);
 sys_phase2 = ss(A_phase2, [], [], [], 1);
 
 % Simulate Phase 2
-[Y2, T2, X2] = lsim(sys_phase2, [], days(phase_change_day+1:end), x0_phase2);
+[Y2, T2, X2] = lsim(sys_phase2, [], days(phase_change_day+1:stabilization_day), x0_phase2);
 
 
 % Combine Phase 1 and Phase 2
@@ -66,8 +66,37 @@ figure;
 plot(days, cumulativeDeaths, 'r', 'LineWidth', 1);
 hold on;
 plot(days, cumulative_infections, 'b', 'LineWidth', 1);
-plot(days, cumsum(X_combined(:,2)), 'g--', 'LineWidth', 1); % Infected
-plot(days, cumsum(X_combined(:,4)), 'k--', 'LineWidth', 1); % Deceased
+A= length(cumsum(X_combined(:,2)));
+B= length(cumsum(X_combined(:,4)));
+disp(A);
+disp(B);
+
+days2 = 1:244;
+plot(days2, cumsum(X_combined(:,2)), 'g--', 'LineWidth', 1); % Infected
+plot(days2, cumsum(X_combined(:,4)), 'k--', 'LineWidth', 1); % Deceased
+
+
+days3=245:400;
+
+% Last state of phase 1 is initial condition for phase 2
+x0_phase3 = [0; 1.9 ; 0 ;.1507; 0];
+
+% Make System for Phase 2
+sys_phase3 = ss(A_phase3, [], [], [], 1);
+
+% Simulate Phase 2
+[Y3, T3, X3] = lsim(sys_phase3, [], days(stabilization_day+1:end), x0_phase3);
+
+
+% Combine Phase 1 and Phase 2
+X_combined = X3;
+
+
+
+plot(days3, X_combined(:,2), 'g--', 'LineWidth', 1); % Infected
+plot(days3, X_combined(:,4), 'k--', 'LineWidth', 1); % Deceased
+
+
 hold off;
 
 xlabel('Days');
