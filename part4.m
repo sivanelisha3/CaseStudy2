@@ -1,7 +1,7 @@
 clear;
 close all;
 
-% Load the provided mock data
+% Load mock data
 load('mockdata2023 (1).mat');
 
 % Number of Days being examined
@@ -10,28 +10,34 @@ days = 1:400;
 % Day the pattern changes: vaccine break
 phase_change_day = 122; 
 
+% Day the pattern stabilizes
+stabilization_day = 244;
+
 % Find the cumulative number of infections
 cumulative_infections = cumsum(newInfections);
 
 % SIRDV Model: 5x5 matrix - placeholders for vaccine parameters
-x_t = [0.75 0.10 0.10 0.05 0.01]; % You might need to adjust these based on your model
+x_t = [0.75 0.10 0.10 0.05 0.01]; 
 
 % Vaccinated and Vaccine-Break values. 
 vaccinated = 0.01; 
 vaccine_break = 0.001; 
 
 % Adjusted A matrix to include vaccinated and vaccine_break
-A_phase1 = [.98855       0        .3   0       0;
-            .00144      .75        0   0  vaccine_break;
-            0           .2499     .7   0       0;
+A_phase1 = [.98889       0        .3   0       0;
+            .0011      .8         0   0  vaccine_break;
+            0           .1999     .7   0       0;
             .00001      .0001      0   1       0;
             vaccinated    0        0   0 1-vaccine_break];
 
-A_phase2 = [.98955          0      .05   0       0;
-            .00045         .718    .1   0  vaccine_break;
-            0             .1999    .85  0       0;
-            0             .0001    0   1       0;
-            vaccinated    0        0   0 1-vaccine_break];
+A_phase2 = [.9          0.04      .3       0       0;
+            .06         .7         0       0  vaccine_break;
+            0            .1       .7       0       0;
+            0           .00001     0       1       0;
+            vaccinated    0        0       0 1-vaccine_break];
+
+% Phase 3 where infections and deaths level out
+A_phase3 = eye(5);
 
 % initial condition: 
 x0 = [1; 0; 0; 0; 0]; 
@@ -50,6 +56,7 @@ sys_phase2 = ss(A_phase2, [], [], [], 1);
 
 % Simulate Phase 2
 [Y2, T2, X2] = lsim(sys_phase2, [], days(phase_change_day+1:end), x0_phase2);
+
 
 % Combine Phase 1 and Phase 2
 X_combined = [X1; X2];
