@@ -6,8 +6,8 @@ x_t = [0.75 0.10 0.10 0.05];
 
 A = [.9997 .05 .3 0;
     .00045 .75 0 0;
-    0 .1999 .7 0;
-    0 .0001 0 1];
+    0 .18 .7 0;
+    0 .02 0 1];
 
 % initial condition: 
 x0 = [1; 0; 0; 0]; 
@@ -33,7 +33,7 @@ recovered_dotted = normalized_cases(1:68) - normalized_deaths(1:68); % normalize
 
 
 
-%%%DATA FROM DAYS BEFORE FIRST PHASE%%%%%
+% %%%DATA FROM DAYS BEFORE FIRST PHASE%%%%%
 selected_dates_phase1 = dates(1:68);
 
 % Single plot
@@ -43,7 +43,7 @@ figure;
 plot(selected_dates_phase1, cumsum(X(:,2)), 'r', 'LineWidth', 2);
 hold on;
 %plot(selected_dates, cumsum(X(:,3)), 'g', 'LineWidth', 2);
-plot(selected_dates_phase1, cumsum(X(:,4)), 'k', 'LineWidth', 2);
+plot(selected_dates_phase1, X(:,4), 'k', 'LineWidth', 2);
 
 
 % Normalized COVID Cases and Deaths in St. Louis for first 68 weeks
@@ -52,7 +52,7 @@ plot(selected_dates_phase1, normalized_deaths(1:68), '--k', 'LineWidth', 2);
 
 
 % Plot
-title('COVID Cases & Deaths in St. Louis Before First Phase');
+title('COVID Cases & Deaths in St. Louis Before Any Variant');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
 legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
@@ -64,7 +64,13 @@ hold off;
 
 
 
-%%%FIRST PHASE%%%%%
+
+
+
+
+
+
+%%%DELTA PHASE%%%%%
 figure;
 
 phase2 = 18; 
@@ -157,6 +163,8 @@ sys_phase2 = ss(A_phase2, [], [], [], 1);
 plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
 
 
+
+
 %Tuning for very last few linear weeks
 A_phase2 = [.99882 0 0 0;
             .00118 .999984 0 0;
@@ -170,88 +178,309 @@ sys_phase2 = ss(A_phase2, [], [], [], 1);
 plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
 
 
-title('COVID Cases & Deaths in St. Louis Second Phase');
+title('COVID Cases & Deaths in St. Louis During Delta Variant');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
 legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
-%%%SECOND PHASE%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%OMICRON PHASE%%%%%
 
 % IMPLEMENT 5 SEPARATE SLOPES FOR ONE MODEL
-
+% 
 % plot all the data in a new figure
+
+
 figure;
+phase3 = 4; 
+selected_dates_phase3 = dates(85:106);
+selected_dates_phase3a = dates(85:88);
+x0_phase3 = [0.874624; 0.125376; 0; 0.00244247]; 
 
-phase3 = 74; 
+A_phase3_slope1 = [.99882 0 0 0;
+            .00118 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
 
-selected_dates_phase3 = dates(85:158);
 
-x0_slope1_phase3 = [0.874624; 0.125376; 0; 0]; 
-% 
-% x0_slope2_phase3 = [0.86263; 0.13737; 0; 0];
-% 
-% x0_slope3_phase3 = [0.819666; 0.180334; 0; 0];
-
-% define the A matrices for each of the 4 slopes
-A_phase3_slope1 = [.99851    0  .3 0;
-                   .00159 .001   0 0;
-                    0     .9989 .7 0;
-                    0     .0001  0 1];
-A_phase3_slope2 = [.99851    0  .3  0;
-                   .00159 .9998 .4  0;
-                    0     .0001 .3  0;
-                    0     .0001  0  1]; 
-A_phase3_slope3 = [.999955  .4  .4  0;
-                   .000045 .5   0  0;
-                    0    .1999    .6  0;
-                    0    .0001     0  1];
-A_phase3_slope4 = [.99955  0   .4 0;
-                   .00045 .9    .3 0;
-                    0    .1999  .3 0;
-                    0    .0001   0 1]; 
-A_phase3_slope5 = [.9998    0  .02   0;
-                   .0012 .0001   0  0;
-                    0     .9998 .98   0;
-                    0     .0001  0   1];
-
-% define the time intervals for each slope
-t_phase3_slope1 = 85:92; 
-t_phase3_slope2 = 92:95;
-t_phase3_slope3 = 95:107;
-t_phase3_slope4 = 107:118;
-t_phase3_slope5 = 118:158;
-
-% create the system for each slope
 sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
-sys_slope2 = ss(A_phase3_slope2, [], [], [], 1);
-sys_slope3 = ss(A_phase3_slope3, [], [], [], 1);
-sys_slope4 = ss(A_phase3_slope4, [], [], [], 1);
-sys_slope5 = ss(A_phase3_slope5, [], [], [], 1);
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase3-1, x0_phase3);
 
-% simulate the system for each slope
-[Y1, T1, X1] = lsim(sys_slope1, [], t_phase3_slope1, x0_slope1_phase3);
-[Y2, T2, X2] = lsim(sys_slope2, [], t_phase3_slope2, X1(end,:));
-[Y3, T3, X3] = lsim(sys_slope3, [], t_phase3_slope3, X2(end,:));
-[Y4, T4, X4] = lsim(sys_slope4, [], t_phase3_slope4, X3(end,:));
-[Y5, T5, X5] = lsim(sys_slope5, [], t_phase3_slope5, X4(end,:));
 
-% combine results
-X5 = X5(1:end-4, :);
-X_combined = [X1; X2; X3; X4; X5];
-selected_dates_phase3_combined = [selected_dates_phase3(1:length(t_phase3_slope1)), selected_dates_phase3(length(t_phase3_slope1)+1:length(t_phase3_slope1)+length(t_phase3_slope2)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+1:length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+1:length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+length(t_phase3_slope4)), selected_dates_phase3(length(t_phase3_slope1)+length(t_phase3_slope2)+length(t_phase3_slope3)+length(t_phase3_slope4)+1:end)];
-% plot combined results
-plot(selected_dates_phase3_combined, cumsum(X_combined(:,2)), 'r', 'LineWidth', 2);
+plot(selected_dates_phase3a, X1(:,2), 'r', 'LineWidth', 2);
 hold on;
-plot(selected_dates_phase3_combined, cumsum(X_combined(:,4)), 'k', 'LineWidth', 2);
-plot(selected_dates_phase3, normalized_cases(85:158), '--r', 'LineWidth', 2);
-plot(selected_dates_phase3, normalized_deaths(85:158), '--k', 'LineWidth', 2);
+plot(selected_dates_phase3a, X1(:,4), 'k', 'LineWidth', 2);
 
-title('COVID Cases & Deaths in St. Louis Third Phase');
+
+plot(selected_dates_phase3, normalized_cases(85:106), '--r', 'LineWidth', 2);
+plot(selected_dates_phase3, normalized_deaths(85:106), '--k', 'LineWidth', 2);
+
+
+phase3 = 5; 
+selected_dates_phase3a = dates(88:92);
+x0_phase3 = [0.874624; 0.128733; 0; 0.00244247]; 
+
+A_phase3_slope1 = [.998 0 0 0;
+            .002 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase3-1, x0_phase3);
+
+
+plot(selected_dates_phase3a, X1(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase3a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+
+
+phase3 = 3; 
+selected_dates_phase3a = dates(92:94);
+x0_phase3 = [0.874624; 0.135701; 0; 0.00244247]; 
+
+A_phase3_slope1 = [.993 0 0 0;
+            .007 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase3-1, x0_phase3);
+
+
+plot(selected_dates_phase3a, X1(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase3a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+phase3 = 5; 
+selected_dates_phase3a = dates(94:98);
+x0_phase3 = [0.874624; 0.147898; 0; 0.00244247]; 
+
+A_phase3_slope1 = [.983 0 0 0;
+            .017 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase3-1, x0_phase3);
+
+
+plot(selected_dates_phase3a, X1(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase3a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+
+phase3 = 9; 
+selected_dates_phase3a = dates(98:106);
+x0_phase3 = [0.874624; 0.205862; 0; 0.00244247]; 
+
+A_phase3_slope1 = [.999 0 0 0;
+            .001 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase3_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase3-1, x0_phase3);
+
+
+plot(selected_dates_phase3a, X1(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase3a, X1(:,4), 'k', 'LineWidth', 2);
+title('COVID Cases & Deaths in St. Louis During Omicron Variant');
 xlabel('Date');
 ylabel('Population Fraction/Normalized Value');
 legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
+grid on;
+datetick('x', 'mmm dd yy', 'keepticks');
+hold off;
+
+
+
+
+
+
+
+
+%%%AFTER OMICRON PHASE%%%%%%
+figure;
+phase4 = 7; 
+selected_dates_phase4 = dates(106:158);
+
+selected_dates_phase4a = dates(106:112);
+x0_phase4 = [0.874624; 0.213465; 0; 0.00244247]; 
+
+A_phase4_slope1 = [.9991 0 0 0;
+            .0008 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase4_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase4-1, x0_phase4);
+
+
+plot(selected_dates_phase4a, X1(:,2), 'r', 'LineWidth', 2);
+hold on;
+plot(selected_dates_phase4a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+plot(selected_dates_phase4, normalized_cases(106:158), '--r', 'LineWidth', 2);
+plot(selected_dates_phase4, normalized_deaths(106:158), '--k', 'LineWidth', 2);
+
+
+
+
+phase4 = 16; 
+selected_dates_phase4a = dates(112:127);
+x0_phase4 = [0.874624; 0.217708; 0; 0.00244247]; 
+
+A_phase4_slope1 = [.997 0 0 0;
+            .003 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase4_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase4-1, x0_phase4);
+
+
+plot(selected_dates_phase4a, X1(:,2), 'r', 'LineWidth', 2);
+hold on;
+plot(selected_dates_phase4a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+
+
+
+
+phase4 = 13; 
+selected_dates_phase4a = dates(127:139);
+x0_phase4 = [0.874624; 0.256194; 0; 0.00244247]; 
+
+A_phase4_slope1 = [.9985 0 0 0;
+            .0015 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase4_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase4-1, x0_phase4);
+
+
+plot(selected_dates_phase4a, X1(:,2), 'r', 'LineWidth', 2);
+hold on;
+plot(selected_dates_phase4a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+
+
+
+
+phase4 = 20; 
+selected_dates_phase4a = dates(139:158);
+x0_phase4 = [0.874624; 0.271757; 0; 0.00244247]; 
+
+A_phase4_slope1 = [.999 0 0 0;
+            .001 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
+
+sys_slope1 = ss(A_phase4_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase4-1, x0_phase4);
+
+
+plot(selected_dates_phase4a, X1(:,2), 'r', 'LineWidth', 2);
+hold on;
+plot(selected_dates_phase4a, X1(:,4), 'k', 'LineWidth', 2);
+
+
+title('COVID Cases & Deaths in St. Louis After Omicron Variant');
+xlabel('Date');
+ylabel('Population Fraction/Normalized Value');
+legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
+grid on;
+datetick('x', 'mmm dd yy', 'keepticks');
+hold off;
+
+
+
+
+
+
+%%WHAT IF SCENARIO (25% CASE REDUCTION IN CASES & DEATHS DURING OMICRON
+%%WAVE)
+
+figure;
+selected_dates_phase5 = dates(85:106);
+phase5 = 22;
+plot(selected_dates_phase5, normalized_cases(85:106), '--r', 'LineWidth', 2);
+hold on;
+plot(selected_dates_phase5, normalized_deaths(85:106), '--k', 'LineWidth', 2);
+
+
+
+%REAL DATA FOR END OF OMICRON HAS 0.21 (POPULATION FRACTION/NORMALIZED VALUE)
+%INFECTED AND 0.0031(POPULATION FRACTION/NORMALIZED VALUE) DEAD. WE MUST
+%REDUCE BOTH BY 25% (SO MULTIPLY THESE VALUES BY .75) AND THAT IS WHERE END
+%VALUES WILL BE.
+
+EndVal_of_Infected = 0.213465;
+EndVal_of_Dead = 0.00313678;
+
+%REDUCE 25%;
+
+WhatIf_Infected = 0.75 * EndVal_of_Infected;
+WhatIf_Dead = 0.75 * EndVal_of_Dead;
+
+
+format = 'What if Value for Infected (where the tuned model will end) is %8.3f \n';
+fprintf(format,WhatIf_Infected);
+
+
+format = 'What if Value for Dead (where the tuned model will end) is %8.3f \n';
+fprintf(format,WhatIf_Dead);
+
+
+x0_phase5 = [0.874624; 0.125376; 0; 0.00244247]; 
+
+A_phase5_slope1 = [.99815 0 0 0;
+            .00195 .99999999 0 0;
+            0 0 1 0;
+            0 .00000001 0 1];
+
+
+sys_slope1 = ss(A_phase5_slope1, [], [], [], 1); 
+[Y1, T1, X1] = lsim(sys_slope1, [], 0:phase5-1, x0_phase5);
+plot(selected_dates_phase5, X1(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase5, X1(:,4), 'k', 'LineWidth', 2);
+
+
+
+title('COVID Cases & Deaths in St. Louis What If Scenario');
+xlabel('Date');
+ylabel('Population Fraction/Normalized Value');
+legend('Actual Data for Cases', 'Actual Data for Deaths', '"What If" Infected"', '"What If" Deceased');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
