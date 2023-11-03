@@ -2,21 +2,8 @@ clear;
 close all;
 
 %%%%%%%%% Part 1 Data Fit %%%%%%%%%
-x_t = [0.75 0.10 0.10 0.05];
 
-A = [.9997 .05 .3 0;
-    .00045 .75 0 0;
-    0 .18 .7 0;
-    0 .02 0 1];
 
-% initial condition: 
-x0 = [1; 0; 0; 0]; 
-
-phase1 = 68; 
-
-% Allocate
-sys = ss(A, [], [], [], 1); % Ts = 1
-[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
 
 % Step 1: Load the data from the 'COVID_STL.mat' file
 load('COVID_STL.mat');
@@ -25,37 +12,179 @@ load('COVID_STL.mat');
 normalized_cases = cases_STL / POP_STL;
 normalized_deaths = deaths_STL / POP_STL;
 
-% % calculate recovered and susceptible based on the given data
-susceptible_dotted = 1 - normalized_cases(1:68) - normalized_deaths(1:68); % Population fraction - normalize_cases - normalize_deaths
-recovered_dotted = normalized_cases(1:68) - normalized_deaths(1:68); % normalized_cases - normalized_deaths
-
-
 
 
 
 % %%%DATA FROM DAYS BEFORE FIRST PHASE%%%%%
 selected_dates_phase1 = dates(1:68);
+selected_dates_phase1a = dates(1:10);
+A = [.9995 0 0 0;
+    .0005 .98 0 0;
+    0 0 1 0;
+    0 .02 0 1];
+
+% Normalized COVID Cases and Deaths in St. Louis for first 68 weeks
 
 % Single plot
 figure;
+plot(selected_dates_phase1, normalized_cases(1:68), '--r', 'LineWidth', 2);
+hold on;
+plot(selected_dates_phase1, normalized_deaths(1:68), '--k', 'LineWidth', 2);
+
+
+% initial condition: 
+x0 = [1; 0; 0; 0]; 
+
+phase1 = 10; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+
 
 % Use selected_dates for the x-axis
-plot(selected_dates_phase1, cumsum(X(:,2)), 'r', 'LineWidth', 2);
-hold on;
-%plot(selected_dates, cumsum(X(:,3)), 'g', 'LineWidth', 2);
-plot(selected_dates_phase1, X(:,4), 'k', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
 
 
-% Normalized COVID Cases and Deaths in St. Louis for first 68 weeks
-plot(selected_dates_phase1, normalized_cases(1:68), '--r', 'LineWidth', 2); 
-plot(selected_dates_phase1, normalized_deaths(1:68), '--k', 'LineWidth', 2);
+
+
+
+selected_dates_phase1a = dates(10:17);
+A = [.9995 0 0 0;
+    .0005 .998 0 0;
+    0 0 1 0;
+    0 .002 0 1];
+
+% initial condition: 
+x0 = [0.9955; 0.00414772; 0; 0.000357227]; 
+
+phase1 = 8; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+% Use selected_dates for the x-axis
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
+
+
+
+
+selected_dates_phase1a = dates(17:35);
+A = [.9985 0 0 0;
+    .0015 .998 0 0;
+    0 0 1 0;
+    0 .002 0 1];
+
+% initial condition: 
+x0 = [0.992; 0.00754821; 0; 0.000435766]; 
+
+phase1 = 19; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+% Use selected_dates for the x-axis
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
+
+
+
+
+
+
+selected_dates_phase1a = dates(35:40);
+A = [.9945 0 0 0;
+    .0055 .999 0 0;
+    0 0 1 0;
+    0 .001 0 1];
+
+% initial condition: 
+x0 = [0.966; 0.0332794; 0; 0.00114984]; 
+
+phase1 = 6; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+% Use selected_dates for the x-axis
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
+
+
+
+selected_dates_phase1a = dates(40:46);
+A = [.9965 0 0 0;
+    .0035 .999 0 0;
+    0 0 1 0;
+    0 .001 0 1];
+
+% initial condition: 
+x0 = [0.9395; 0.0593349; 0; 0.00136869]; 
+
+phase1 = 7; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+% Use selected_dates for the x-axis
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
+
+
+selected_dates_phase1a = dates(46:60);
+A = [.9987 0 0 0;
+    .0013 .9998 0 0;
+    0 0 1 0;
+    0 .0002 0 1];
+
+% initial condition: 
+x0 = [0.9197; 0.0784884; 0; 0.00177284]; 
+
+phase1 = 15; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+% Use selected_dates for the x-axis
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
+
+
+
+
+selected_dates_phase1a = dates(60:68);
+A = [.9995 0 0 0;
+    .0005 .9998 0 0;
+    0 0 1 0;
+    0 .0002 0 1];
+
+% initial condition: 
+x0 = [0.903; 0.0948451; 0; 0.00199521]; 
+
+phase1 = 9; 
+
+% Allocate
+sys = ss(A, [], [], [], 1);
+[Y, T, X] = lsim(sys, [], 0:phase1-1, x0);
+
+% Use selected_dates for the x-axis
+plot(selected_dates_phase1a, X(:,2), 'r', 'LineWidth', 2);
+plot(selected_dates_phase1a, X(:,4), 'k', 'LineWidth', 2);
 
 
 % Plot
 title('COVID Cases & Deaths in St. Louis Before Any Variant');
 xlabel('Date');
-ylabel('Population Fraction/Normalized Value');
-legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
+ylabel('Rate for STL Population');
+legend('Infection Rate', 'Death Rate', 'Modeled Infection Rate', 'Modeled Death Rate');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');  
 hold off;
@@ -87,6 +216,7 @@ A_phase2 = [.9993 0 0 0;
 
 % Initial conditions for the second phase
 x0_phase2 = [0.89926519; 0.0985651; 0; 0.00216971];
+
 
 % Create the system for the second phase
 sys_phase2 = ss(A_phase2, [], [], [], 1); 
@@ -180,8 +310,8 @@ plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
 
 title('COVID Cases & Deaths in St. Louis During Delta Variant');
 xlabel('Date');
-ylabel('Population Fraction/Normalized Value');
-legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
+ylabel('Rate for STL Population');
+legend('Modeled Infection Rate', 'Modeled Death Rate', 'Infection Rate', 'Death Rate');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
@@ -308,8 +438,8 @@ plot(selected_dates_phase3a, X1(:,2), 'r', 'LineWidth', 2);
 plot(selected_dates_phase3a, X1(:,4), 'k', 'LineWidth', 2);
 title('COVID Cases & Deaths in St. Louis During Omicron Variant');
 xlabel('Date');
-ylabel('Population Fraction/Normalized Value');
-legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
+ylabel('Rate for STL Population');
+legend('Modeled Infection Rate', 'Modeled Death Rate', 'Infection Rate', 'Death Rate');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
@@ -417,8 +547,8 @@ plot(selected_dates_phase4a, X1(:,4), 'k', 'LineWidth', 2);
 
 title('COVID Cases & Deaths in St. Louis After Omicron Variant');
 xlabel('Date');
-ylabel('Population Fraction/Normalized Value');
-legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
+ylabel('Rate for STL Population');
+legend('Modeled Infection Rate', 'Modeled Death Rate', 'Infection Rate', 'Death Rate');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
@@ -479,8 +609,8 @@ plot(selected_dates_phase5, X1(:,4), 'k', 'LineWidth', 2);
 
 title('COVID Cases & Deaths in St. Louis What If Scenario');
 xlabel('Date');
-ylabel('Population Fraction/Normalized Value');
-legend('Actual Data for Cases', 'Actual Data for Deaths', '"What If" Infected"', '"What If" Deceased');
+ylabel('Rate for STL Population');
+legend('Actual Data for Case Rate', 'Actual Data for Death Rate', '"What If" Infected" Rate', '"What If" Deceased Rate');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
