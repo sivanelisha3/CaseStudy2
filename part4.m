@@ -60,6 +60,9 @@ sys_phase2 = ss(A_phase2, [], [], [], 1);
 
 % Combine Phase 1 and Phase 2
 X_combined = [X1; X2];
+vaxpop(1:244) = X_combined(1:244, 5);
+vaxbreak(1:244) = X_combined(1:244, 2);
+
 
 % Plot Simulations
 figure;
@@ -104,3 +107,11 @@ ylabel('Cumulative Counts');
 title('Cumulative Deaths and Infections Over Time');
 legend('Cumulative Deaths from mock data', 'Cumulative Infections from mock data', 'Model Infected', 'Model Deceased', 'Location', 'northwest');
 grid on;
+
+
+
+
+vaxpop(244:365) = X_combined(1:122, 5);
+vaxbreak(244:365) = X3(1:122, 2);
+save competition vaxpop vaxbreak
+
