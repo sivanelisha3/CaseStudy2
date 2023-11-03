@@ -64,9 +64,6 @@ hold off;
 
 
 
-
-
-
 %%%FIRST PHASE%%%%%
 figure;
 
@@ -75,26 +72,103 @@ phase2 = 18;
 % Look at first 100 days
 selected_dates_phase2 = dates(68:85);
 
-A_phase2 = [.9997 .05 .3 0;
-            .00045 .75 0 0;
-            0 .1999 .7 0;
-            0 .0001 0 1];
+
+A_phase2 = [.9993 0 0 0;
+            .0007 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+
 
 % Initial conditions for the second phase
-x0_phase2 = [0.8; 0.1; 0.05; 0.05];
+x0_phase2 = [0.89926519; 0.0985651; 0; 0.00216971];
 
 % Create the system for the second phase
-sys_phase2 = ss(A_phase2, [], [], [], 1); % Ts = 1
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
 
 % Simulate the system for the second phase
 [Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
 
 % Plot normalized cases and deaths for the second phase
-plot(selected_dates_phase2, cumsum(X(:,2)), 'r', 'LineWidth', 2);
+
+plot(selected_dates_phase2, X(:,4), 'k', 'LineWidth', 2);
 hold on;
-plot(selected_dates_phase2, cumsum(X(:,4)), 'k', 'LineWidth', 2);
 plot(selected_dates_phase2, normalized_cases(68:85), '--r', 'LineWidth', 2);
 plot(selected_dates_phase2, normalized_deaths(68:85), '--k', 'LineWidth', 2);
+
+%Making the tuned model exact
+selected_dates_phase2a = dates(68:69);
+phase2 = 2; 
+x0_phase2 = [0.89926519; 0.0985651; 0; 0.00216971];
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
+
+
+
+%Tuning for model 2nd week
+A_phase2 = [.999 0 0 0;
+            .001 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+selected_dates_phase2a = dates(69:70);
+phase2 = 2; 
+x0_phase2 = [0.89926519; 0.099193; 0; 0.00216971];
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
+
+
+%Tuning for linear weeks following 2nd week
+A_phase2 = [.99782 0 0 0;
+            .00218 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+selected_dates_phase2a = dates(70:80);
+phase2 = 11; 
+x0_phase2 = [0.89926519; 0.100091; 0; 0.00216971];
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
+
+
+%Tuning for linear weeks following 2nd week
+A_phase2 = [.9981 0 0 0;
+            .0019 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+selected_dates_phase2a = dates(80:81);
+phase2 = 2; 
+x0_phase2 = [0.89926519; 0.119486; 0; 0.00216971];
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
+
+
+%Tuning for linear weeks following 2nd week
+A_phase2 = [.9989 0 0 0;
+            .0011 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+selected_dates_phase2a = dates(81:82);
+phase2 = 2; 
+x0_phase2 = [0.89926519; 0.121193; 0; 0.00216971];
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
+
+
+%Tuning for very last few linear weeks
+A_phase2 = [.99882 0 0 0;
+            .00118 .999984 0 0;
+            0 0 1 0;
+            0 .000016 0 1];
+selected_dates_phase2a = dates(82:85);
+phase2 = 4; 
+x0_phase2 = [0.89926519; 0.12218; 0; 0.00216971];
+sys_phase2 = ss(A_phase2, [], [], [], 1); 
+[Y, T, X] = lsim(sys_phase2, [], 0:phase2-1, x0_phase2);
+plot(selected_dates_phase2a, X(:,2), 'r', 'LineWidth', 2);
+
 
 title('COVID Cases & Deaths in St. Louis Second Phase');
 xlabel('Date');
@@ -103,9 +177,6 @@ legend('Infected', 'Deceased', 'Normalized Cases', 'Normalized Deaths');
 grid on;
 datetick('x', 'mmm dd yy', 'keepticks');
 hold off;
-
-
-
 %%%SECOND PHASE%%%%%
 
 % IMPLEMENT 5 SEPARATE SLOPES FOR ONE MODEL
